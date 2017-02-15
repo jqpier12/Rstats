@@ -188,10 +188,11 @@ for(val in vector1){print(if (val %% 2) condition=condition+1)}
 
 # An alternative way of writing it where print(condition) tells you the total number of odd values
 
-vector1<-c(3,5,6,9,8,11,15,16,22,23)
-condition<-0
+vector1 <- c(3,5,6,9,8,11,15,16,22,23)
+condition <- 0
 
-for(val in vector1){if (val %% 2) condition=condition+1}
+for(val in vector1){if (val %% 2==0) condition <- condition+1
+print(condition)}
 print(condition)
 
 # In this loop, "val" corresponds to each values in our vector
@@ -210,8 +211,10 @@ You can also create nested for loops which are loops inside of loops if you need
 ```{r}
 
 # Let's make a 10 x 10 matrix and fill it using a nested for loop
-matrix1 <- matrix(nrow=5, ncol=5)
+matrix1 <- matrix(nrow=5, ncol=6)
 matrix1 ## you can see it's empty right now
+dim(matrix1)
+dim(matrix1)
 
 # This loop will assign values in each row/column based on the 
 # product of the i and j values that we specify here:

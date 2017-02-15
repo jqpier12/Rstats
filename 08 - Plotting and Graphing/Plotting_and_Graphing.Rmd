@@ -1,0 +1,277 @@
+---
+title: "Plotting and Graphing in R"
+output: html_notebook
+---
+Genevieve Nuttall
+
+
+
+
+
+
+
+##### *Why make graphs in R?*
+
+* Easy to manipulate graphs
+* Can create many types of plots
+* Able to show statistical results on graphs
+* Make graphs that are visually appealing
+
+
+#### The basics of plotting in R
+
+In R, the basic plotting function is *plot()* 
+
+This function can be used to visualize data from a data frame that has been saved in your global environment.
+
+Let's try making a basic plot using an existing dataset in R, **iris**
+
+```{r}
+head(iris)
+
+# Plotting Sepal.Length vs. Petal.Length in the iris dataset.
+
+plot(iris$Sepal.Length, iris$Petal.Length)
+
+# This shows us information, but let's clean it up to make it easier to interpret
+
+plot(iris$Sepal.Length, iris$Petal.Length, pch=16, col="blue", xlab="Sepal Length (cm)", ylab="Petal Length(cm)")
+
+# What does pch do? Try changing the number to 15 or 17.
+# Test out different colors using the col() command
+# xlab and ylab let you rename the axes 
+
+# Now, let's add a trendline to see the linear relationship here using abline which adds a line over your previous plot:
+
+plot(iris$Sepal.Length, iris$Petal.Length, pch=16, col="blue", xlab="Sepal Length (cm)", ylab="Petal Length(cm)")
+abline(lm(iris$Petal.Length ~ iris$Sepal.Length),col="blue")
+
+# Want to add a title to your graph? Call your plot again and then use the title() command to add a title
+plot(iris$Sepal.Length, iris$Petal.Length, pch=16, col="blue", xlab="Sepal Length (cm)", ylab="Petal Length(cm)")
+abline(lm(iris$Petal.Length ~ iris$Sepal.Length),col="blue")
+title("Comparison between sepal and petal lengths in Irises")
+
+```
+
+```{r}
+# Try making your own graph of sepal verses petal width with a trendline
+
+
+```
+
+
+
+Now that we've covered the basic plots, let's go over different components a plot.
+
+1. Parameters of plots
+
+  * There are many, many options for plotting in R. You can set up the **parameters** of your plot to fit multiple graphs within   your plotting region, change the margins of the plotting region, and adjust the appearance of the text on your plots
+  * To change the parameters of your plot, use the command *par()*
+  * You will most likely use mfrow, mar, oma, and bty as common parameter commands
+  * mfrow is really important if you are trying to plot multiple graphs in the same region; *par(mfrow=c(1,2))* for example         means that you want 1 row and 2 columns of graphs in the plotting region.
+```{r}
+# Look at the help file of par() to see all of the options available for changing the parameter of your graph
+?par()
+```
+
+2. Types of graphs
+
+* Histograms *hist()*
+```{r}
+hist(iris$Sepal.Length, xlab="Sepal Length (cm)")
+```
+
+* Line or scatter *plot()*
+      * To get a scatter plot, simply plot data
+      * To get a line graph, plot data and specfy type="l" within plot command
+```{r}
+osprey<-read.csv("OspreyNationData.csv")
+head(osprey)
+
+# A graph with points
+plot(osprey$Year, osprey$MappedNests, # Tells us which data we are plotting (year on x axis, mapped nests on y)
+     ylim = c(0, 700), # Tells us the limit of the y axis - so axis is going from 0 to 700
+     ylab = "Number of mapped nests", # The name of the y axis 
+     xlab = "Year", # The name of the x axis
+     pch = 16, # The shaped of the point
+     col = c("dark blue"), # The color of the point
+     las = 1, # The direction the text on the x-axis
+     cex = 1.0) # The size of the point
+
+# The same graph with a line connecting the points
+plot(osprey$Year, osprey$MappedNests, 
+     type = "l", # Use a line type to show data
+     ylim = c(0, 700), 
+     ylab = "Number",
+     xlab = "Year",
+     pch = 16,
+     col = c("dark blue"),
+     las = 1,
+     lwd = 3, # Line width is 3 so it looks bold
+     cex = 2)
+
+# Another option:
+plot(osprey$Year, osprey$MappedNests, 
+     type = "b", # Use a line type with points to show data
+     ylim = c(0, 700), 
+     ylab = "Number",
+     xlab = "Year",
+     pch = 16,
+     col = c("dark blue"),
+     las = 1,
+     lwd = 3, 
+     cex = 2)
+
+```
+
+* Barplot *barplot()*
+```{r}
+barplot(osprey$Stewards, 
+        ylim=c(0,250), 
+        xlab="Year",
+        ylab="Number of Stewards",
+        names.arg=c(2014,2015,2016))
+
+```
+
+* Pie chart (general rule: don't use pie charts)
+```{r}
+piepieces<-c(3,5,6)
+pie(piepieces)
+
+```
+* Boxplots
+```{r}
+boxplot(iris$Sepal.Length ~ iris$Species,
+        xlab="Iris species",
+        ylab="Sepal Length (cm)")
+# Try adding a title to your boxplot here!
+# Can you make each box a different color for each species and add a legend to say which color goes with which species?
+
+# Using par(c(mfrow=1,2)), plot a boxplot next to the one you just made above with Sepal Width instead of length
+
+```
+
+
+3. Plotting options
+
+* The plot function has tons of options to change color, labels, tick marks on the axes, shapes of points, line widths, etc.
+* To review more plotting options, look at the help file 
+```{r}
+?plot()
+```
+* Sometimes, you need to fix the axes on your plot. To do this, set xaxt="n" or yaxt="n" then use an additional line of code to 
+  add a new axis and new tick marks
+```{r}
+plot(osprey$Year, osprey$MappedNests, 
+     type = "b", 
+     ylim = c(0, 700), 
+     xaxt = "n",
+     ylab = "Number",
+     xlab = "Year")
+axis(side = 1, labels = 2014:2016, at = 2014:2016)
+```
+* Need to add a legend to your graph after adding multiple series of data? Use the *legend()* command on a new line after calling a plot and adding *lines()*
+```{r}
+
+plot(osprey$Year, osprey$MappedNests, type = "b", ylim = c(0, 700), xaxt = "n",ylab = "Number", xlab = "Year",  pch = 15,  col = c("brown"),   las = 1,   lwd = 3,   cex = 2)
+axis(side = 1, labels = 2014:2016, at = 2014:2016)
+lines(osprey$Year,osprey$ActiveNests, type = "b",  pch= 18,   col = "skyblue",  lwd=3,  cex=2)
+legend("bottomright", # location of legend in graph
+       legend = c("Mapped nests", "Known active nests"), # arguments in legened
+       pch = c(15,18), # symbols representing each series
+       col = c("brown","skyblue"), # color representing series
+       bty = "n") # remove box around legend
+```
+
+
+4. Saving plots
+
+  It's important to export and save your graphs on to your computer so you can insert them in papers, manuscripts, etc.
+
+  There are a few options for saving graphs, but they all follow the same principles:
+
+* Open the device that you'll use to save your image (*png()*, *pdf()*, or *bmp()*)
+      * This will save it in your current working directory
+      * Put the desired name of the graph inside the parentheses in quotations 
+      * Make sure to end the name with the type of device i.e. png("mygraph.png")
+      * Can specify height= and width= to get dimensions of the image
+* Plot your graph
+* Use the *dev.off()*to stop plotting and tell R to save the plot to your computer
+```{r}
+png("mypie.png", width = 300, height = 400)
+pie(piepieces)
+dev.off()
+
+# After running this, check in your current working directory folder and you should have a new image call "mypie"
+```
+
+### A graphing challenge for you: 
+
+The notes above give you all of the information necessary to recreate this graph: 
+![Try to recreate this graph](C:/Users/G/Dropbox/Data_Feb15/OspreyGraph.png)
+
+
+
+
+
+# GGPLOT!
+
+### Now that you've master the basic plotting functions, let's move on to ggplot
+
+> ggplot is a package used to create graphs
+
+Some people prefer ggplot to normal plotting functions because it is easier to use and can do more with visualization
+
+Unfortunately, it uses an entirely different syntax than what we just learned! 
+
+But, you may find it easier to use because to plot a graph, each part of the graph is added to a chain of code as if each part were a new layer for the plot. 
+
+```{r}
+install.packages("ggplot2")
+
+library(ggplot2)
+```
+
+The basics of ggplot for making a simple scatter plot or line graph:
+
+
+* In the ggplot() command, you enter your data frame and aesthetics, or aes()
+        * Within aes, you want to specify your x and y values by doing x= and y=
+        * This will be your first layer
+```{r}
+
+library(MASS)
+head(women)
+ggplot(data=women, aes(x=height, y=weight))
+```
+* Running the above code sets up the coordinate system of the graph but doesn't show you any data
+* To show your data, you need to add it as a layer using geom_point() or geom_line()
+```{r}
+ggplot(data=women, aes(x=height, y=weight)) + geom_point()
+ggplot(data=women, aes(x=height, y=weight)) + geom_line() 
+
+## You can also add title as a layer and change the axis titles by adding the labs command
+ggplot(data=women, aes(x=height, y=weight))  + geom_line() +
+  labs(title="Average Height and Weight of American Females", x="Average Height (inches)",y="Average Weight (lbs)") +
+  theme_classic() + # Removes grid from the graph
+  theme(plot.title = element_text(hjust = 0.5)) # Centers the title of the graph
+```
+
+To make a bar graph using ggplot, you add a layer called geom_bar 
+You can change the appearance of the barplot by changing the position
+```{r}
+
+ggplot(diamonds, aes(clarity, fill=cut)) + geom_bar()
+
+ggplot(diamonds, aes(clarity, fill=cut)) + geom_bar(position="dodge")
+# What does dodge do?
+
+ggplot(diamonds, aes(clarity, fill=cut)) + geom_bar(position="fill")
+# What does fill do?
+
+```
+
+
+
+
